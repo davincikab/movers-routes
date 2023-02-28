@@ -240,12 +240,17 @@ body {
 
 .div-marker {
     background-color: orange;
-    width: 8px;
-    height: 8px;
+    min-width: 8px;
+    min-height: 8px;
     z-index: 1;
     border-radius: 50%;
     cursor: pointer;
     border:1.5px solid #fff;
+}
+
+.div-marker img {
+    height: 20px !important;
+    height: 20px !important;
 }
 
 .div-marker.origin-marker {
