@@ -1,0 +1,656 @@
+:root {
+    --primary-color:#37B6FF;
+    --grey:#999999;
+    --blue:#2B85E5;
+    --white:#FFFFFF;
+}
+
+body { 
+    margin: 0; 
+    padding: 0; 
+}
+
+.header {
+    height: 0vh !important;
+    width: 100vw;
+    background-color: var(--grey);
+}
+
+.filter-section {
+    width: 40vw;
+}
+
+.filter-section .filters {
+    display: flex;   
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin:0.5rem;
+    position: relative;
+}
+
+.submit-section {
+    display: flex;
+    align-items: center;
+}
+
+.submit-section button {
+    margin:10px;
+    background-color: #15396C;
+}
+
+.search-btn {
+    padding:0.5rem;
+    width: 40%;
+    background-color: var(--primary-color);
+    color:var(--white);
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0px 0px 0.25rem #999999;
+    cursor: pointer;
+}
+
+.btn-continue {
+    float: right;
+    margin-right: 25px;
+    cursor: pointer;
+    width: 90px;
+    background-color: #2B85E5;
+    border-radius: 10px;
+}
+
+.btn-continue:disabled {
+
+}
+
+.input-group select, .form-control {
+    height: 30px;
+    line-height: 1.8;
+    border-radius: 5px;
+    border: 1px solid #222;
+}
+
+.input-group select:focus, .form-control:focus {
+    outline: none;
+}
+
+.date-range {
+    height: 30px;
+}
+
+.listing-section {
+    max-height: 60vh;
+    overflow-y: auto;
+    margin-top: 50px;
+    margin: 5px;
+}
+
+.map-wrapper table {
+    border-collapse: collapse;
+}
+
+.listing-section table th, td {
+    border: 1px solid #ddd;
+    padding:0.5rem;
+    min-width: 90px;
+
+    text-align: center;
+    margin: 0 auto;
+}
+
+.route-rows:hover {
+    background-color: rgb(197, 247, 247);
+    cursor: pointer;
+}
+
+.route-rows td > * {
+    pointer-events: none;
+}
+
+.listing-item {
+    display: flex;
+    width: 95%;
+    margin:0.5rem auto;
+    border-radius: 3px;
+    box-shadow: 0px 0px 2px rgb(139, 139, 139);
+    padding:0.5rem;
+    cursor: pointer;
+}
+
+.map-pin {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex:0.2;
+    cursor: pointer;
+}
+
+.map-pin img {
+    height: 25px;
+   
+    pointer-events: none;
+}
+
+.reset-btn {
+    position: absolute;
+    bottom:0px;
+    right:0px;
+    z-index: 2;
+    margin:0 10px 30px;
+    background-color: #15396C;
+    color:var(--white);
+    padding:0.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0px 0px 0.5rem #333;
+}
+
+.legend-item > *,  .map-pin > * {
+    pointer-events: none !important;
+}
+
+.listing-item > div {
+    text-align: left;
+}
+
+.listing-item__inner {
+    display: flex;
+    flex-direction: column;
+    margin:0.25rem 0;
+}
+
+.listing-content {
+    flex: 0.9;
+}
+
+/* map */
+.map-container {
+    display: flex;
+    height: 80vh;
+    position: relative;
+    font-size: 14px;
+}
+
+.map-wrapper {
+    height: 100%;
+    width: 70vw;
+    overflow: hidden;
+}
+
+.map-wrapper.open #map {
+    height: 70%;
+    width: 100%; 
+    z-index: 0;
+}
+
+.map-wrapper #map {
+    height: 100%;   
+    position: relative;
+}
+
+
+.map-wrapper.open .table-section {
+    height: 30%;
+    overflow: auto;
+}
+
+
+.map-wrapper .table-section {
+    height: 0px;
+}
+
+
+.legend-container {
+    position:absolute;
+    bottom: 0;
+    left: 0;
+    margin: 10px 10px 30px;
+    background-color: white;
+    z-index: 2;
+    padding:0.5rem;
+    border-radius: 5px;
+    box-shadow: 0px 0px 0.5rem #222;
+}
+
+.legend-container .legend-item {
+    display: flex;
+    align-items: center;
+}
+
+.legend-container .color-div {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+
+    margin-right: 0.5rem;
+}
+
+.states-marker {
+    width: 30px;
+    border-radius: 2px;
+    padding:0 0.1rem;
+    text-align: center;
+    background-color: #15396C;
+    color: white;
+    cursor: pointer;
+}
+
+.div-marker {
+    background-color: orange;
+    width: 8px;
+    height: 8px;
+    z-index: 1;
+    border-radius: 50%;
+    cursor: pointer;
+    border:1.5px solid #fff;
+}
+
+.div-marker.origin-marker {
+    background-color: transparent;
+    border: none;
+}
+
+.dest-marker {
+    width: 5px;
+    height: 5px;
+    background-color: green !important;
+}
+
+.div-marker::after {
+    position: absolute;
+    z-index: -1;
+    content: " ";
+    display: none;
+    width: 23px;
+    height: 23px;
+    top: -4px;
+    left: -4px;
+    border-radius: 50%;
+    background-color: rgba(217, 131, 3, 0.623);
+    animation: pulse 1.5s 0.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.suggestions {
+    position: absolute;
+    border-radius: 4px;
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 0px 0px 0.5rem #222;
+    z-index: 1;
+    top:60px;
+}   
+
+.card-item {
+    border-bottom: 1px solid #ddd;
+    padding:0.25rem;
+    cursor: pointer;
+}
+
+.card-item:hover {
+    background-color: var(--blue);
+    color:white;
+}
+
+.geocoder-container {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+}
+
+.geocoder-container > div {
+    flex: 1;
+    margin:0.25rem;
+    width: 80%;
+    margin: 0.5rem;
+    z-index: 1;
+}
+
+.geocoder-container  .input-div:first-child {
+    z-index: 2;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.d-none {
+    display: none !important;
+}
+
+.header-section {
+    margin:0.25rem 0.5rem;
+    width: 70%;
+    margin: 0.5rem auto;
+
+    text-align: center;
+    border-radius: 5px;
+    padding:0.5rem;
+}
+
+.section-body {
+    margin:1rem;
+}
+
+.section-body .text-section {
+    padding:0.375rem;
+    margin:0.5rem;
+    border-radius: 5px;
+}
+
+.btn-group {
+    margin: 1rem 0.5rem;
+}
+
+.btn-group .btn  {
+    width:40px !important;
+    padding:0.375rem 0.5rem;
+    border:0px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 0.5rem;
+    position: relative;
+}
+
+.btn-group .btn > input {
+    /* display: none; */
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.text-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+  
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+.btn-group  input:checked + label {
+    background-color: #1C6DA6;
+}
+
+.bg-light {
+    background-color: #B3B3B3;
+}
+
+#bedroom-known {
+    margin-top: 1rem;
+}
+
+/* details section */
+.section-register #card-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* flex-direction: column; */
+    /* align-items: center; */
+}
+
+.section-register #card-section .card-section {
+    padding:1rem 0.5rem;
+    width: 90%;
+}
+
+#card-section .card-section .title {
+    font-weight: 600;
+    margin:0.25rem 0;
+}
+
+.card-section .rate {
+    width: 100%;
+    float: right;
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin:0.5rem 0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.card-section .action-section {
+    display: flex;
+    justify-content: flex-end;
+    font-weight: 500;
+    margin:0.25rem 0;
+}
+
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+  
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
+  border-radius: 5px;
+}
+
+.modal-content .section-title {
+    padding: 1rem 0.5rem;
+    width: 80%;
+    margin: 0 auto;
+    border-radius: 5px;
+}
+
+.modal-content .section-body {
+    padding:0.5rem;
+}
+
+.modal-content .route-card {
+    width: 40%;
+    height: 150px;
+    border-radius: 5px;
+    background-color: white;
+    padding:0.375rem;
+}
+
+.modal-content .card-section {
+    background-color: white;
+    height: 100%;
+    width: 100%;
+    background-color: white;
+}
+
+.route-identifier {
+    width: 100%;
+    height: 40px;
+}
+
+.route-identifier .submit-button {
+    width:100px;
+    color:white;
+    padding:0.37rem 0.5rem;
+    text-align: center;
+}
+
+.cards-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+.map-card {
+    width: 40%;
+    height: 150px;
+    border-radius: 5px;
+    background-color: white;
+}
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+  
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.logo-section {
+    background-color: #1C6DA6;
+    padding:0.5rem;
+}
+
+.layer-control {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    width: 85px;
+    margin: 10px 10px 30px;
+    background-color: white;
+    z-index: 2;
+
+    padding: 0.5rem;
+    border-radius: 5px;
+    box-shadow: 0px 0px 0.5rem #222;
+}
+
+.layer-control .input-group {
+    display: flex;
+    flex-direction: row;
+    margin: 0px;
+}
+
+.route-markers {
+    z-index: 3;
+}
+
+/* custom table design */
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+thead tr {
+  border-bottom: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  height: 1px;
+}
+
+th {
+  font-weight: bold;
+  height: inherit;
+  padding: 0;
+}
+
+th:not(:first-of-type) {
+  border-left: 1px solid #ddd;
+}
+
+th button {
+  background-color: #1C6DA6;
+  color:white;
+  border: none;
+  cursor: pointer;
+  display: block;
+  font: inherit;
+  height: 100%;
+  margin: 0;
+  min-width: max-content;
+  padding: 0.5rem 1rem;
+  position: relative;
+  text-align: left;
+  width: 100%;
+  font-size: 0.9rem;
+}
+
+tbody tr {
+  border-bottom: 1px solid #ddd;
+}
+
+td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+th button::after {
+    position: absolute;
+    right: 0.5rem;
+}
+
+th button[data-dir="asc"]::after {
+  content: url("data:image/svg+xml,%3Csvg xmlns='https://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpolygon points='0, 0 8,0 4,8 8' fill='%23818688'/%3E%3C/svg%3E");
+}
+
+th button[data-dir="desc"]::after {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpolygon points='4 0,8 8,0 8' fill='%23818688' /%3E%3C/svg%3E");
+}
+
+.input-div .label {
+    margin: 0.25rem;
+}
+
+.input-div:first-child {
+    z-index: 2;
+}
+
+.input-div .mapboxgl-ctrl-geocoder.mapboxgl-ctrl .geocoder {
+    width: 100% !important;
+}
+
+/* 
+#geocoder {
+    width: 100% !important;
+}  
+*/
+
+.mapboxgl-ctrl-geocoder.mapboxgl-ctrl {
+    width: 100% !important;
+}
+
+.mapboxgl-ctrl-geocoder input {
+    width: 100% !important;
+}

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hub Routes</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    
+    <!-- <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js"></script> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css"/>
+
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="header">
+
+    </div>
+
+    <div class="map-container">
+
+        <div class="filter-section">
+            <!-- <div class="logo-section">
+                <img src="icons/logo.png" alt="" height="auto" width="80%">
+            </div> -->
+            
+            <div class="form" id="form">
+
+                <div class="section-intro" id="phase-1">
+                    <div class="header-section bg-light">
+                        Welcome to the USMPO Registration <br> Process
+                    </div>
+
+                    <div class="section-body">
+                        <div class=" text-section bg-light">
+                            Registering your move on the United States Moving Protection website can
+                            provide you with several benefits and protections. First and foremost, it
+                            allows you to verify that the moving company you have selected is registered
+                            and licensed with the Federal Motor Carrier Safety Administration (FMCSA). 
+                            This helps protect you from fraudulent or unlicensed movers. Additionally, by
+                            registering your move, you can access helpful resources, such as routes, tips
+                            on how to plan and prepare for your move, as well as information on your
+                            rights and responsibilities as a consumer. Finally, registering your move can
+                            help you resolve any disputes or claims that may arise during the moving
+                            process.
+                        </div>
+
+                        <div class="text-section bg-light">Do you have a carrier ? </div>
+
+                        <div class="btn-group">
+                            <label for="btn-no" class="btn bg-light">
+                                <input type="radio" name="carrier" class="btn bg-light btn-label" value="no" id="btn-no" required/>
+                                <span class="slider"></span>
+                                <div class="text-slider">No</div>
+                            </label>
+
+                            <label for="btn-yes" class="btn bg-light">
+                                <input type="radio" name="carrier" class="btn bg-light btn-label" value="yes" id="btn-yes" required/>
+                                <span class="slider"></span>
+                                <div class="text-slider">Yes </div>
+                            </label>
+                            
+                            <!-- <button class="btn bg-light" id="btn-yes">Yes</button> -->
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <div class="section-info d-none" id="phase-2">
+
+                    <div class="header-section bg-light">
+                        In order to register your move we need the following information:
+                    </div>
+
+                    <div class="section-body">
+                        <div class="d-flex geocoder-container">
+                            <div class="input-div">   
+                                <div class="label">What is your pickup location ?</div>
+                                <div id="geocoder" class="geocoder"></div>
+                            </div>
+                            
+                            <div class="input-div">   
+                                <div class="label">What is your pickup destination ?</div>
+                                <div id="geocoder-dest" class="geocoder"></div>
+                            </div>
+                        </div>
+    
+                        <div class="text-section bg-light">
+                            The distance between origin and destination is <span id="distance">.....</span> nationwide any driver
+                            can only drive 400 miles per Day, this will give you an approximate of the
+                            time it may take.
+                            </br> </br>
+    
+                            The next most important thing is that you as a customer know the rate that
+                            you would be charge because it never changes and they are standardized
+                            by the USMPO which means that any price below the standard is a red flag.
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div class="section-pricing d-none" id="phase-3">
+                    <div class="header-section bg-light">
+                        Pricing
+                    </div>
+
+                    <div class="section-body">
+                        <div class="text-section bg-light">
+                            RATE = <span id="rate">___________</span>this rate is based on the miles, fuel, labor, and availability
+                            of trucks and space.
+                            </br> </br>
+
+                            Knowing your rate determining the price is very simple since is calculated in
+                            a very simple way, nowadays the only way to calculate the price is with a
+                            simple formula that multiplies rate <span id="rate-asp">(____)</span> x (CF) Cubic feet is the volume
+                            calculated length x high x width.
+                            </br> </br>
+
+                            In order to give you a determined price we need to know your inventory
+                            which represents the volume (CF) or space you are going to occupy.
+                            </br> </br>
+
+                            <div>
+                                Enter cubic feet: 
+                                <input class="form-control" type="number" id="cubic-feet">
+                            </div>
+            
+                            Aprox: Bedrooms
+                            <div id="bedroom-unknown">
+                                If you dont know dont worry we’ll take care of it later.
+                            </div>
+                            <br> 
+                            <div id="bedroom-known" class="d-none">
+                                Great it looks like you qualify to have a USMPO agent to help you through all
+                                the process...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-register d-none" id="phase-4">
+                    <div class="header-section bg-light">Details</div>
+
+                    <div class="section-body">
+                        <div id="card-section">
+                            
+                        </div>
+
+                        <div class="user-info-form">
+                            <form action="/" method="post">
+                                <div class="input-group">
+                                    <label for="first-name">First Name</label>
+                                    <input type="text" data-name="first-name" id="firstName" class="form-control registration-field"/>
+                                </div>
+                
+                                <div class="input-group">
+                                    <label for="last-name">Last Name</label>
+                                    <input type="text" data-name="last-name" id="lastName" class="form-control registration-field"/>
+                                </div>
+                
+                                <div class="input-group">
+                                    <label for="phone-number">Phone Number</label>
+                                    <input type="text" data-name="phone-number" id="phoneNumber" class="form-control registration-field"/>
+                                </div>
+
+                                <div>
+                                    <button type="submit" class="search-btn" id="register-button">Register</button>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                
+
+                <div class="post-section">
+                    <!-- 
+                        <div class="input-group">
+                            <label for="bedrooms">Bedrooms</label>
+                            <input type="number" class="form-control" id="bedrooms" placeholder="Bedroom Count ...">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="inventory">Inventory Items</label>
+                            <input type="file" class="form-control" id="inventory" placeholder="Files ...">
+                        </div>  
+                    -->
+
+                </div>
+
+                <div class="filters d-none">
+                    <!-- origin -->
+                    <div class="input-group">
+                        <label for="origin">Origin</label>
+                        <input type="text" class="form-control" id="origin" placeholder="Search Zipcode ...">
+
+                        <div class="suggestions" id="origin-results">
+                            <!-- <div class="">Origin</div> -->
+                        </div>
+                    </div>
+
+                    <!-- destination -->
+                    <div class="input-group">
+                        <label for="destination">Destination</label>
+                        
+
+                        <input type="text" class="form-control" id="destination" placeholder="Search Zipcode ...">
+
+                        <div class="suggestions" id="destination-results">
+                            <!-- <div class="">Destination</div> -->
+                        </div>
+
+                    </div>
+
+                </div>
+                
+                <!-- date range -->
+                <div class="input-group d-none">
+                    <label for="date-range">Date Range</label>
+                    <input data-name="date-range" id="date-range" class="form-control"/>
+                </div>
+
+                <!-- <div> -->
+                    <div class="input-group d-none">
+                        <button type="submit" class="search-btn" id="submit-button"> Search </button>
+                    </div>
+                <!-- </div> -->
+
+                <button type="submit" class="search-btn btn-continue" id="continue-button">
+                    Continue
+                </button>
+
+            </div> 
+
+            
+
+            <div class="submit-section d-none">
+                <button type="submit" class="search-btn" id="post-button"> Post </button>
+                <button type="submit" class="search-btn" id="reserve-button"> Reserve </button>
+            </div>
+
+        </div>
+
+        <div class="map-wrapper open" id="map-wrapper">
+
+            <div id="map">
+                <div class="reset-btn" id="reset-btn">Reset Button</div>
+
+                <div class="legend-container">
+                    <div class="section-title">Legend</div>
+
+                    <div class="legend-body">
+                        <div class="legend-item">
+                            <div class="color-div" style="background-color: black;"></div>
+                            <div>Origin</div>
+                        </div>
+
+                        <div class="legend-item">
+                            <div class="color-div" style="background-color: green;"></div>
+                            <div>Destination</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="layer-control" class="layer-control">
+                    <div class="title">Map Layers</div>
+
+                    <div class="input-group">
+                        <input type="checkbox" class="form-check" id="route" checked>
+                        <label for="route" class="label">Route</label>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="checkbox" class="form-check" id="trucks" checked>
+                        <label for="trucks" class="label">Trucks</label>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="table-section">
+                <div class="rates-table">
+                    <table class="table">
+                        <thead id="table-head"></thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
+                </div>
+
+                <div class="listing-section d-none">
+                    <table>
+                        <thead>
+                            <th>From</th>
+                            <th>To</th>
+                            <th></th>
+                        </thead>
+    
+                        <tbody id="listing-table">
+    
+                        </tbody>
+                    </table>
+                </div> 
+
+            </div>
+        </div>
+
+        <a id="downloadAnchorElem" style="display:none"></a>
+
+
+        <!-- User Contact Information -->
+        <div id="myModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <div class="bg-light section-title">
+                    Thank you for registering your move with the USMPOMB
+                </div>
+
+                <br>
+
+                <div class="section-body bg-light">
+                    <div class="text-section">
+                        Your route has been reserved.
+
+                        To proceed with the payment the only way we
+                        recommend is through QCC to continue with
+                        payment click on the confirmation number:
+                    </div>
+
+                    <div class="route-identifier">
+                        <div class="submit-button btn-continue" >®J01CA4401</div>
+                    </div>
+
+                    <div class="cards-section d-flex">
+                        <div class="route-card">
+                            <div class="card-section">
+                                <div class="title">USMPO ROUTE: NJ01CA4401</div>
+                                <div class="dot-number">DOT #: 13641243</div>
+    
+                                <div class="distance">NJ TO CA: 1789 miles</div>
+                                <div class="rate">$6.25</div>
+    
+                                <div class="occupied">15% Occupied</div>
+                                
+                                <div class="">ExPEDITE..</div>
+                            </div>
+                        </div>
+
+                        <div class="map-card" id="map-card"></div>
+                    </div>
+                </div>
+            </div>
+          
+          </div>
+    </div>
+    
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
+
+    <script src="js/d3.js"></script>
+    <script src='js/turf.min.js'></script>
+    <script src="js/xlsx.full.min.js"></script>
+    <script src="js/main.js"></script>
+
+    <!-- <script type="text/javascript" src="https://form.jotform.com/jsform/230447855487064"></script> -->
+
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap&v=weekly" async defer ></script> -->
+</body>
+</html>

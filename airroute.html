@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hub Routes</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="map"></div>
+    <a id="downloadAnchorElem" style="display:none"></a>
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js"></script>
+    <script src='turf.min.js'></script>
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiZGF1ZGk5NyIsImEiOiJjanJtY3B1bjYwZ3F2NGFvOXZ1a29iMmp6In0.9ZdvuGInodgDk7cv-KlujA';
+        
+        let colors = [' #88CCEE', '#CC6677', '#DDCC77', '#117733', '#332288', '#AA4499', '#44AA99', '#999933', '#882255', '#661100', '#6699CC', '#888888', '#f6edbd'];
+        // let colors = ['#3d5941', '#778868', '#b5b991', '#f6edbd', '#edbb8a', '#de8a5a', '#ca562c', '#008080', '#70a494', '#b4c8a8', '#f6edbd', '#edbb8a', '#de8a5a', '#ca562c'];
+        
+        let places = [{"Id":0,"Name":"Miami","Lat":25.7824664,"Lon":-80.5000894},{"Id":1,"Name":"Atlanta","Lat":33.7675738,"Lon":-84.5602184},{"Id":2,"Name":"Chicago","Lat":41.8339042,"Lon":-88.0121592},{"Id":3,"Name":"New York","Lat":40.6976701,"Lon":-74.259877},{"Id":4,"Name":"Dallas","Lat":32.8209296,"Lon":-97.0117533},{"Id":5,"Name":"Los Angeles","Lat":34.0207305,"Lon":-118.6919326},{"Id":6,"Name":"San Francisco","Lat":37.757815,"Lon":-122.5076408},{"Id":7,"Name":"Seattle","Lat":47.6131746,"Lon":-122.4821502},{"Id":8,"Name":"Portland","Lat":45.5428688,"Lon":-122.7944872},{"Id":9,"Name":"Pheonix","Lat":33.470882,"Lon":-112.3561069},{"Id":10,"Name":"Denver","Lat":39.7254496,"Lon":-105.0583699},{"Id":11,"Name":"Nashville","Lat":36.15650908,"Lon":-86.77887538},{"Id":12,"Name":"Charlotte","Lat":35.225353,"Lon":-80.89115}];
+
+        const map = new mapboxgl.Map({
+            container: 'map', // container ID
+            // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+            style: 'mapbox://styles/mapbox/dark-v11', // style URL
+            center: [-99.25302, 39.00920], // starting position [lng, lat]
+            projection:'mercator',
+            zoom: 3.6 // starting zoom
+        });
+
+
+        map.on("load", () => {
+
+            let lineColors = getRouteExpression()
+
+            map.addSource("route", {
+                type:'geojson',
+                data:{"type":"FeatureCollection", "features":[] }
+                // data:'data.json'
+            });
+
+            map.addLayer({
+                id:'route-line',
+                source:'route',
+                type:'line',
+                paint:{
+                    "line-color":lineColors,
+                    "line-width":1
+                }
+            });
+
+            renderMarkers(places);
+        });
+
+
+        function renderMarkers(places) {
+            let markers = places.forEach(place => {
+                return createMarker(place);
+            });
+        }
+
+
+        function createMarker(place) {
+            let markerElement = document.createElement("div");
+            markerElement.className = "div-marker";
+
+            markerElement.style.backgroundColor = `${routeColor(place)}`;
+
+            let popup = new mapboxgl.Popup({ focusAfterOpen:false });
+            popup.setHTML(`<div class="popup-content">
+                <div class="popup-title">${place.Name}</div>
+            </div>`);
+
+            let marker = new mapboxgl.Marker({element:markerElement});
+            marker
+                .setLngLat([place.Lon, place.Lat])
+                .setPopup(popup)
+                .addTo(map)
+
+            return marker;
+        }
+
+        function getRouteExpression() {
+            let placesCount = places.length;
+            
+            let stops = places.map((place) => {
+                return [place.Id, colors[place.Id]]
+            }).reduce((a, b) => [...a, ...b], []);
+
+            console.log(stops);
+
+            return [
+                'interpolate',
+                ['linear'],
+                ['get', 'route_id'],
+                ...stops
+            ];
+        }
+
+        function routeColor(place) {
+            return colors[place.Id];
+        }
+
+
+        // create a routing class
+        class RoutingAlgo {
+            constructor(map, places) {
+                this.map = map;
+                this.places = places;
+            }
+
+            randomRouteEndpoints() {
+                let count = this.places.length;
+
+                this.routes = {};
+
+                this.places.forEach(place => {
+                    let destinationCount = Math.round(Math.random() * 8 + 1);
+
+                    // console.log(place.Name);
+                    this.routes[place.Name] = {...place};
+                    this.routes[place.Name].destination = this.places.slice(0, destinationCount).filter(item => item.Name !== place.Name);
+                
+                }); 
+                
+                console.log(this.routes);
+
+                return this;
+            }
+
+            createRoutes() {
+                this.routesGeojson = turf.featureCollection([]);
+
+                let features = Object.values(this.routes).map(entry => {
+                    let routes = entry.destination.map(item => this.createRoute({Lat:entry.Lat, Lon:entry.Lon, Name:entry.Name}, {...item}, entry))
+                    
+                    return routes;
+                });
+
+                features = features.reduce((a, b) => {
+                    a = [...a, ...b] 
+
+                    return a;
+                }, []);
+
+                console.log(features);
+
+                this.routesGeojson = turf.featureCollection([...features]);
+                // let entries = Object.values(this.routes);
+
+                // this.iterateRequest(entries);
+
+                // let entry = entries[0];
+                
+                this.map.once("load", (e) => {
+                    this.map.getSource("route").setData({...this.routesGeojson})
+                });
+                
+            }
+
+            createRoute(origin, destination, entry) {
+                var start = turf.point([origin.Lon, origin.Lat]);
+                var end = turf.point([destination.Lon, destination.Lat]);
+
+                var greatCircle = turf.greatCircle(start, end, { 
+                    properties: { 
+                        name: `${origin.Name} to ${destination.Name}`, 
+                        route_id:entry.Id
+                    }
+                });
+
+                return greatCircle;
+            }
+
+
+            renderRoutes() {
+                if(this.map.loaded()) {
+                    this.map.getSource("route").setData({...this.routesGeojson});
+                } else {
+                    this.map.once("load", (e) => {
+                        this.map.getSource("route").setData({...this.routesGeojson})
+                    });
+                }
+                
+            }
+
+            iterateRequest(entries) {
+                console.log(entries);
+
+                let count = entries.length;
+                let destinations = [];
+                let i = 0, j = 0;
+
+                let iter = (entry)  => {
+                    let destination = [entry.Lon, entry.Lat ];
+                    let origin =  [entries[i].Lon, entries[i].Lat ];
+
+                    this.requestRoute(
+                        origin, destination, 
+                        { origin:entries[i].Name, destination:entry, route_id:entries[i].Id },
+                        callbackFn
+                    );
+                }
+
+                const callbackFn = (result)  => {
+                    j++
+
+                    console.log(result);
+
+                    this.routesGeojson.features = [...this.routesGeojson.features, ...result];
+                    this.renderRoutes();
+
+                    if(j < destinations.length) {
+                        let entry = destinations[j];
+                        iter(entry);
+                    } else {
+                        // move to the next origin
+                        console.log("Moving to origin");
+
+                        j = 0;
+                        i++;
+
+                        if(i < count) {
+                            destinations = entries[i].destination;
+
+                            iter(destinations[0]);
+                        } else {
+                            this.storeAndDownloadRoutes();
+                        }
+                        
+                    }
+                    
+                }
+
+                destinations = entries[0].destination;
+                iter(destinations[0]);
+
+                // callbackFn([]);
+
+                // let features = entries.slice(0,2).map(entry => {
+                //     console.log(entry);
+
+                //     let origin = [entry.Lon, entry.Lat];
+
+                //     return entry.destination.map(item => {
+                //         let destination = [entry.destination[0].Lon, entry.destination[0].Lat ];
+                        
+                //         return this.requestRoute(origin, destination, { origin:entry.Name, destination:entry.destination[0] });
+                //     })
+                    
+                // });
+
+            }
+
+
+            // request the routes from mapbox routing api;
+            requestRoute(origin, destination, originObj, cb) {
+               let url = `https://api.mapbox.com/directions/v5/mapbox/driving/${origin};${destination}?access_token=${mapboxgl.accessToken}&geometries=geojson`
+                
+               return fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    let { routes } = data;
+                    let features = routes.map(route => {
+
+                        return {
+                            "type":"Feature",
+                            "geometry":{...route.geometry},
+                            "properties":{...originObj}
+                        }
+
+                    });
+
+                    cb(features);
+
+                    // return features;
+                })
+                .catch(console.error)
+            }
+
+            storeAndDownloadRoutes() {
+                var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.routesGeojson));
+
+                var dlAnchorElem = document.getElementById('downloadAnchorElem');
+                dlAnchorElem.setAttribute("href",     dataStr     );
+                dlAnchorElem.setAttribute("download", "data.json");
+                dlAnchorElem.click();
+            }
+
+        }
+
+
+        let routingInstance = new RoutingAlgo(map, places);
+        routingInstance
+            .randomRouteEndpoints()
+            .createRoutes();
+
+        // map.once("load")
+
+    </script>
+</body>
+</html>
