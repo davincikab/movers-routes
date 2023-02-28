@@ -169,7 +169,7 @@ body {
 /* map */
 .map-container {
     display: flex;
-    height: 85vh;
+    height: 95vh;
     position: relative;
     font-size: 13px;
 }
