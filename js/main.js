@@ -180,8 +180,10 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiZGF1ZGk5NyIsImEiOiJjanJtY3B1bjYwZ3F2NGFvOXZ1a
 
                     console.log(sheets);
 
-                    renderListingViewSection(sheets);
-                    fireSortListeners(sheets);
+                    // renderListingViewSection(sheets);
+                    // fireSortListeners(sheets);
+
+                    spinner.toggle();
 
                     customSequenceForm.setSheets(sheets);
                 })
@@ -1533,9 +1535,11 @@ class CustomSequenceForm {
             e.preventDefault();
 
             if(this.handleDetailsSection()) {
-                // proceed to last phase
+                spinner.toggle();
 
-                modalContainer.toggleModal();
+                // proceed to last phase// send the details to google sheet
+                this.handleFormSubmit();                
+
             } else {
                 alert("All inputs are required");
             }
@@ -1605,11 +1609,11 @@ class CustomSequenceForm {
     }
 
     setOrigin(origin) {
-        this.carrierInfo.origin = { ...origin };
+        this.carrierInfo.origin = origin.place_name;
     }
 
     setDestination(destination) {
-        this.carrierInfo.destination = { ...destination };
+        this.carrierInfo.destination = destination.place_name;
     }
 
     setDistance(distance) {
@@ -1726,7 +1730,141 @@ class CustomSequenceForm {
         document.getElementById("continue-button").disabled = this.isDisabled;
 
     }
+
+    handleFormSubmit() {
+        let fields = {
+            ...this.carrierInfo,
+            Id:this.makeId(),
+            date:new Date().toLocaleDateString()
+        };
+
+        let fieldIds =  ['Id', 'origin', 'destination', 'distance', 'cubicFeet', 'rate', 'firstName', 'lastName', 'phoneNumber', 'routes', 'date'];
+        // `Id, origin, destination, distance, cubicFeet, rate, firstName, lastName, phoneNumber, routes, date`
+        let details = {};
+        fieldIds.forEach(id => {
+            if(id == 'routes') {
+                details[id] = fields[id].length;
+            } else {
+                details[id] = fields[id];
+            }
+            
+        });
+
+        console.log(details);
+
+        // send the data to the google sheet
+        let url = "https://script.google.com/macros/s/AKfycbwwB6ovEmcQRl72IPaNRgcjltF2nv8F-a2Frtwk-MGPCx8N7SjDxNcC7WCIbFgoCG6O/exec";
+        
+        var formBody = [];
+        for (var property in details) {
+            var encodedKey = encodeURIComponent(property);
+            var encodedValue = encodeURIComponent(details[property]);
+
+            formBody.push(encodedKey + "=" + encodedValue);
+        }
+
+        formBody = formBody.join("&");
+
+        // console.log(formBody);
+        // this.sendXMLHTTPRequest(url, details);
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+            },
+            body:formBody
+        })
+        .then(res => res.json())
+        .then(resData => {
+            console.log(resData);
+
+            // toggler spinner
+            spinner.toggle();
+
+            // open modal
+            modalContainer.toggleModal();
+        })
+        .catch(console.error);   
+
+        // {
+        //     "Id": "7XtpUmlnN",
+        //     "cubicFeet": "1300",
+        //     "date": "2/28/2023",
+        //     "destination": "Los Angeles, California, United States",
+        //     "distance": "2284",
+        //     "firstName": "David",
+        //     "lastName": "Njeri",
+        //     "origin": "Detroit, Michigan, United States",
+        //     "phoneNumber": "0745987546",
+        //     "rate": "6.00",
+        //     "routes": 12
+        // }
+
+    }
+
+    sendXMLHTTPRequest(url, data) {
+        var xhr = new XMLHttpRequest();
+
+        xhr.open('POST', url);
+        // xhr.withCredentials = true;
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+            // form.reset();
+            // var formElements = form.querySelector(".form-elements")
+            // if (formElements) {
+            //   formElements.style.display = "none"; // hide form
+            // }
+            // var thankYouMessage = form.querySelector(".thankyou_message");
+            // if (thankYouMessage) {
+            //   thankYouMessage.style.display = "block";
+            // }
+
+            // console.log(xhr);
+            spinner.toggle();
+          }
+
+        };
+
+        // url encode form data for sending as post data
+        let keys = ['Id', 'origin', 'destination', 'distance', 'cubicFeet', 'rate', 'firstName', 'lastName', 'phoneNumber', 'routes', 'date'];
+        var encoded = keys.map(function(k) {
+            return encodeURIComponent(k) + "=" + encodeURIComponent(data[k]);
+        }).join('&');
+        
+        console.log(encoded);
+        xhr.send(encoded);
+    }
+
+    formatDate() {
+        return ``;
+    }
+
+    makeId(length=9) {
+        let result = '';
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const charactersLength = characters.length;
+        let counter = 0;
+        while (counter < length) {
+          result += characters.charAt(Math.floor(Math.random() * charactersLength));
+          counter += 1;
+        }
+        return result;
+    }
 }
 
 const customSequenceForm = new CustomSequenceForm();
 // customSequenceFor
+
+const Spinner = () => {
+    let toggleSpinner = () => {
+        document.getElementById("spinner").classList.toggle('d-none');
+    }
+
+    return {
+        toggle:toggleSpinner
+    }
+}
+
+let spinner = Spinner();

@@ -317,7 +317,7 @@
 
             <!-- Modal content -->
             <div class="modal-content">
-                <span class="close">&times;</span>
+                <span class="close d-none">&times;</span>
                 <div class="bg-light section-title">
                     Thank you for registering your move with the USMPOMB
                 </div>
@@ -355,9 +355,25 @@
                         <div class="map-card" id="map-card"></div>
                     </div>
                 </div>
+
+                <div class="modal-footer">
+                    <button class="search-btn btn-continue" id="btn-modal">Submit</button>
+                </div>
+              
             </div>
-          
-          </div>
+        </div>
+
+        <div class="spin-container" id="spinner">
+            <div>
+                <div class="spin" id="loader"></div>
+                <div class="spin" id="loader2"></div>
+                <div class="spin" id="loader3"></div>
+                <div class="spin" id="loader4"></div>
+                <span id="text">LOADING...</span>
+            </div>
+        </div>
+
+            
     </div>
     
 
