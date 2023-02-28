@@ -53,7 +53,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiZGF1ZGk5NyIsImEiOiJjanJtY3B1bjYwZ3F2NGFvOXZ1a
             // all the routes: 
             map.addSource("route", {
                 type:'geojson',
-                data:'https://movers-routes.netlify.app/data.json'
+                data:'https://davincikab.github.io/movers-routes/data.json'
             });
 
             map.addLayer({
@@ -187,7 +187,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiZGF1ZGk5NyIsImEiOiJjanJtY3B1bjYwZ3F2NGFvOXZ1a
                 })
                 .catch(console.error)
 
-            d3.csv('https://movers-routes.netlify.app/trucks_locations.csv')
+            d3.csv('https://davincikab.github.io/movers-routes/trucks_locations.csv')
             .then(data => {
                 data = data.slice(0, -1).filter(item => item['From'] && item['origin_x']);
                 console.log(data);
@@ -196,7 +196,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiZGF1ZGk5NyIsImEiOiJjanJtY3B1bjYwZ3F2NGFvOXZ1a
                 map.getSource('mover-locations').setData(uniqueLocations);
 
                 // route data
-                fetch('https://movers-routes.netlify.app/data.json')
+                fetch('https://davincikab.github.io/movers-routes/data.json')
                     .then(res => res.json())
                     .then(dataRoute => {
 
@@ -365,7 +365,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiZGF1ZGk5NyIsImEiOiJjanJtY3B1bjYwZ3F2NGFvOXZ1a
             markerElement.className = `div-marker ${prefix}-marker`;
 
             if(prefix == 'origin') { 
-                markerElement.innerHTML = `<img src="https://movers-routes.netlify.app/icons/cargo-truck.png" width="20px" height="20px" />`;
+                markerElement.innerHTML = `<img src="https://davincikab.github.io/movers-routes/icons/cargo-truck.png" width="20px" height="20px" />`;
             }
             // markerElement.style.backgroundColor = `${routeColor(place)}`;
 
@@ -653,7 +653,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiZGF1ZGk5NyIsImEiOiJjanJtY3B1bjYwZ3F2NGFvOXZ1a
         }
 
         function updateStatesData(data) {
-            fetch('https://movers-routes.netlify.app/states_centroids.geojson')
+            fetch('https://davincikab.github.io/movers-routes/states_centroids.geojson')
                 .then(res => res.json())
                 .then(statesData => {
                     console.log(statesData);
@@ -753,7 +753,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiZGF1ZGk5NyIsImEiOiJjanJtY3B1bjYwZ3F2NGFvOXZ1a
 
                 this.statesBorder = [];
 
-                d3.csv("https://movers-routes.netlify.app/states.csv")
+                d3.csv("https://davincikab.github.io/movers-routes/states.csv")
                     .then(res => {
                         console.log(res);
 
